@@ -1,7 +1,12 @@
 package main
 
-import "fmt"
+import "github.com/gofiber/fiber/v2"
 
 func main() {
-	fmt.Println("Hello world!")
+	app := fiber.New()
+
+	handler := Handler{}
+	app.Get("/versions", handler.GetVersion)
+
+	_ = app.Listen(":3000")
 }
