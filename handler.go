@@ -4,6 +4,7 @@ import "github.com/gofiber/fiber/v2"
 
 type Handler struct {
 }
+
 type Versions struct {
 	Ios     string `json:"ios"`
 	Android string `json:"and"`
