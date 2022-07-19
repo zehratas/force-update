@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/go-redis/redis/v9 v9.0.0-beta.1
 	github.com/gofiber/fiber/v2 v2.34.1
+	golang.org/x/net v0.0.0-20220225172249-27dd8689420f
 )
 
 require (

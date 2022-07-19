@@ -12,8 +12,8 @@ func main() {
 		DB:       0,  // use default DB
 	})
 	app := fiber.New()
-
-	handler := Handler{redis: rdb}
+	database := database{redis: rdb}
+	handler := Handler{&database}
 	app.Get("/versions", handler.GetVersion)
 	app.Post("/versions", handler.SetVersions)
 

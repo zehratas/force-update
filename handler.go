@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/go-redis/redis/v9"
 	"github.com/gofiber/fiber/v2"
 	"regexp"
 )
@@ -9,7 +8,7 @@ import (
 var semver = regexp.MustCompile(`^([1-9]\d?)+\.\d+\.\d+$`)
 
 type Handler struct {
-	redis *redis.Client
+	db Database
 }
 
 type Versions struct {
@@ -24,17 +23,17 @@ type ApiError struct {
 }
 
 func (h *Handler) GetVersion(c *fiber.Ctx) error {
-	iosVersion, err := h.redis.Get(c.UserContext(), "ios").Result()
+	iosVersion, err := h.db.Get(c.UserContext(), "ios")
 	if err != nil {
-		panic(err)
+		return err
 	}
-	andVersion, err := h.redis.Get(c.UserContext(), "and").Result()
+	andVersion, err := h.db.Get(c.UserContext(), "and")
 	if err != nil {
-		panic(err)
+		return err
 	}
-	huaVersion, err := h.redis.Get(c.UserContext(), "hua").Result()
+	huaVersion, err := h.db.Get(c.UserContext(), "hua")
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	versions := Versions{
@@ -60,17 +59,17 @@ func (h *Handler) SetVersions(c *fiber.Ctx) error {
 	if !semver.MatchString(versions.Huawei) {
 		return c.Status(fiber.StatusBadRequest).JSON(ApiError{Code: 203, Error: "Huawei version number is invalid"})
 	}
-	err = h.redis.Set(c.UserContext(), "ios", versions.Ios, 0).Err()
+	err = h.db.Set(c.UserContext(), "ios", versions.Ios)
 	if err != nil {
-		panic(err)
+		return err
 	}
-	err = h.redis.Set(c.UserContext(), "and", versions.Android, 0).Err()
+	err = h.db.Set(c.UserContext(), "and", versions.Android)
 	if err != nil {
-		panic(err)
+		return err
 	}
-	err = h.redis.Set(c.UserContext(), "hua", versions.Huawei, 0).Err()
+	err = h.db.Set(c.UserContext(), "hua", versions.Huawei)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	return c.Status(fiber.StatusOK).JSON(versions)
 }
